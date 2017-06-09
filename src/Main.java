@@ -1,5 +1,7 @@
 
-import java.io.IOException;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
 
 /**
  * Main class of program. Purpose of program is to find elements of function using inicsal method.
@@ -8,19 +10,15 @@ import java.io.IOException;
  *
  */
 public class Main {
-    private InputReader inputReader;
-    
     public static void main(String[] args)  { 
-        Main main = new Main();
-        main.init();
-    }
-    
-    private void init(){
-        inputReader = new InputReader();
-        try {
-            inputReader.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        EventQueue.invokeLater(new Runnable() { 
+            @Override
+            public void run() {
+                MainFrame frame = new MainFrame(); 
+                frame.setTitle("Sas Project");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setVisible(true); 
+            }
+        });
     }
 }
