@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 /**
- * Class that gets input from user and finds elements of function using inicsal method
+ * Class that gets input from user and finds elements of function using initial method
  * @author Kucharczyk
  *
  */
@@ -19,28 +19,35 @@ public class Solver {
         float x1 = fromBorder;
         float x2 = toBorder;
         float tmp;
-        if(fromBorder >= toBorder)throw new IOException("Wrong border values");
-        if(checkValues(x1, x2, coefficients)) throw new IOException("Values of function have the same sign");
-        if(ifDerivativeHaveZeroPoint(coefficients, fromBorder, toBorder, eps, max))throw new IOException("Function have extereme in this section");
-        if(eps <= 0)throw new IOException("Eps must be over 0");
-        if(max <= 0)throw new IOException("Max must be over 0");
-        while(--max >= 0 && Math.abs(x1 - x2) > eps){
+        
+        if(fromBorder >= toBorder)
+            throw new IOException("Wrong border values");
+        if(checkValues(x1, x2, coefficients)) 
+            throw new IOException("Values of function have the same sign");
+        if(ifFunctionHaveExtremePoint(coefficients, fromBorder, toBorder, eps, max))
+            throw new IOException("Function have extereme in this section");
+        if(eps <= 0)
+            throw new IOException("Eps must be over 0");
+        if(max <= 0)
+            throw new IOException("Max must be over 0");
+        
+        while( (--max >= 0) && (Math.abs(x1 - x2) > eps) ){
             tmp = findZeroPointLinear(x1, x2, coefficients);
             x1 = x2;
             x2 = tmp;
             System.out.println(x1 + " " + x2);
         }
-        System.out.println(max);
-        if(max <= 0)throw new IOException("Max was not enought to find zero point with that precision");
+        if(max <= 0)
+            throw new IOException("Max was not enought to find zero point with that precision");
         return x2;
     }
     /**
-     * Finds value of function for argument
+     * Finds value of polynomial for argument x
      * @param x argument
      * @param coefficients what function
      * @return value of function
      */
-    private float getValueOfFunction(float x, Vector<Float> coefficients){
+    private float getValueOfPolynomial(float x, Vector<Float> coefficients){
         float sum = 0;
         for(int i = 0; i < coefficients.size(); i++){
             sum += coefficients.get(i) * Math.pow(x,coefficients.size() - i - 1);
@@ -55,8 +62,8 @@ public class Solver {
      * @return x of zero point
      */
     private float findZeroPointLinear(float x1, float x2, Vector<Float> coefficients){
-        float a = (getValueOfFunction(x1, coefficients) - getValueOfFunction(x2, coefficients)) / (x1 - x2);
-        float b = getValueOfFunction(x1, coefficients) - a*x1;
+        float a = (getValueOfPolynomial(x1, coefficients) - getValueOfPolynomial(x2, coefficients)) / (x1 - x2);
+        float b = getValueOfPolynomial(x1, coefficients) - a*x1;
         return -b/a;
     }
     /**
@@ -67,7 +74,7 @@ public class Solver {
      * @return true if there is - false if not
      */
     private boolean checkValues(float x1, float x2, Vector<Float> coefficients){
-        if((getValueOfFunction(x1, coefficients) * (getValueOfFunction(x1, coefficients)) < 0))
+        if((getValueOfPolynomial(x1, coefficients) * (getValueOfPolynomial(x1, coefficients)) < 0))
             return true;
         return false;
      }
@@ -80,7 +87,7 @@ public class Solver {
      * @param max max iteration
      * @return
      */
-    private boolean ifDerivativeHaveZeroPoint(Vector<Float> coefficients, float fromBorder, float toBorder, float eps, int max){
+    private boolean ifFunctionHaveExtremePoint(Vector<Float> coefficients, float fromBorder, float toBorder, float eps, int max){
         Vector<Float> derivativeCoe = new Vector<Float>();
         for(int i = 0; i < coefficients.size() - 1; i++)
             derivativeCoe.add(coefficients.get(i) * (coefficients.size() - i - 1));
@@ -91,12 +98,12 @@ public class Solver {
         if(!checkValues(x1, x2, derivativeCoe)) return false;
         while(max-- > 0 && Math.abs(x1 - x2) > eps){
             x0 = (x1 + x2) / 2;
-            fx0 = getValueOfFunction(x0, derivativeCoe);
+            fx0 = getValueOfPolynomial(x0, derivativeCoe);
             //If value of function is 0.001 away from 0
-            if(fx0 < 0.001 && fx0 > 0.001) return true;
-            if(checkValues(x1, x2, derivativeCoe)){
+            if(fx0 < 0.001 && fx0 > -0.001) return true;
+            if(checkValues(x1, x2, derivativeCoe))
                 x2 = x0;
-            }else
+            else
                 x1 = x0;
         }
         return false;
