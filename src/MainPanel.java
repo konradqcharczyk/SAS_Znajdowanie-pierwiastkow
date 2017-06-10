@@ -1,10 +1,13 @@
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -93,11 +96,18 @@ public class MainPanel extends JPanel{
     private void addButton(){
         startButton = new JButton("Start");
         startButton.addActionListener(new ActionListener() {
-            
             @Override
             public void actionPerformed(ActionEvent e) {
                 readInfo();
-                result.setText(solver.solve(coefficients, from, to, eps, max) + "");
+                try {
+                    result.setText(solver.solve(coefficients, from, to, eps, max) + "");
+                } catch (IOException e1) {
+                    JOptionPane.showMessageDialog(new JFrame(),
+                            e1.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+
             }
         });
         add(startButton);
